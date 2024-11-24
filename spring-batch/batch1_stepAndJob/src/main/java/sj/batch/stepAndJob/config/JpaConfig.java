@@ -1,0 +1,11 @@
+package sj.batch.stepAndJob.config;
+
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+@Configuration
+@EntityScan(basePackages = "sj.batch.global")
+@EnableJpaRepositories(basePackages = "sj.batch.global")
+public class JpaConfig {
+}

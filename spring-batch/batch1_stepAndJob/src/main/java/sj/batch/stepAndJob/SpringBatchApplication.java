@@ -1,13 +1,14 @@
-package sj.springBatch;
+package sj.batch.stepAndJob;
 
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@EnableBatchProcessing
+@SpringBootApplication(scanBasePackages={"sj.batch"})
 public class SpringBatchApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringBatchApplication.class, args);
 	}
-
 }
