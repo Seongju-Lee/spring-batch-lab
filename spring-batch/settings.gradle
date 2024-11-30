@@ -1,4 +1,5 @@
 rootProject.name = 'spring-batch'
 
 include 'batch1_stepAndJob'
+include 'batch2'
 include 'global'

@@ -1,26 +1,26 @@
 
-스프링 배치를 통해 배치 작업을 작성할 때, 어떤 구성을 가지는지 알아본다. 추가로, 직접 실행해보며 배치 작업의 전반적인 흐름을 이해해본다.  
-사실, 배치에서 가장 중요하게 생각하는 부분은 [Spring Batch Meta-Data Schema]()인데, 이 메타 데이터를 이해해야 배치의 기본을 이해한 것이라 생각하기 때문이다.    
-하지만, 이 메타 데이터를 이해하기 위해선 스프링 배치의 기본적인 실행 방식은 이해해야 하기 때문에 해당 글과 [다음 글]()이 선행된다.
-(단순한 배치의 구성만 이해하고, 메타데이터를 익힌 후에 깊게 알아본다.)
+스프링 배치를 본격적으로 알아보기 전에, 기본적인 작업 구성을 파악한다. 예시 코드를 통해 기본적인 Job을 작성하고, 실행해본다.  
 
-# 1. 배치 기본 구성(Step & Job)
+# 스프링 배치 기본 구성 코드예시
+
+
+## 1. 배치 기본 구성(Step & Job)
 
 ### 1.1 Job
-Spring Batch는 JOB이라는 단위로 작업들을 분류할 수 있다. 
-소위 말하는 Batch Job을 의미하는데, 이 Job은 **일련의** 작업 단위다. 예를 들어, "한 기능에 대한 배치를 작성해야돼"라고 한다면, 하나의 Batch Job을 만든다는 의미다.  
+Spring Batch는 Job이라는 단위로 작업들을 분류할 수 있다. 
+소위 말하는 Batch Job을 의미하는데, 이 Job은 **일련의** 작업을 수행한다. 예를 들어, "한 기능에 대한 배치를 작성해야돼"라고 한다면, 하나의 Batch Job을 만든다는 의미다.  
 
 ### 1.2 Step
 이 Job은 **Step**이라는 녀석을 한 개 이상 가진다. 이 Step은 **실제 배치 작업을 수행하는 역할**로, 설정, 데이터 조회, 배치 로직 실행 등과 같이 Job을 실제로 수행하는 녀석이다.  
 즉, 이 Step은 여러가지 역할이 가능하다. 만약 Step이 역할별(데이터 조회 수행, 실제 배치 로직 수행, 데이터 저장 수행 등)로 분리된다면, 각 역할별 Step이 하나의 Job 안에 묶이는 셈이다.  
 
-![img.png](src/main/resources/static/job_step.png)
+![job과 step의 관계](src/main/resources/static/job_step.png)
 
 위와 같이 하나의 Job안에는 여러 Step을 정의할 수 있으며, 이 **Step들이 모여서** 1.1의 Job에서 이야기한 **일련의 작업**이 되는 것이다.  
 또한, Job이 여러 개의 Step을 가지듯이 Step도 어떻게 구성하느냐에 따라서 내부 구성이 달라질 수 있는데, 이는 아래 절에서 다루어본다.
 
 
-# 2. Job & Step 정의
+## 2. Job & Step 정의
 
 실제로 **Job을 정의**하고, **Step을 통해 배치 로직을 구현**해보자.  
 [[코드 참고]](src/main/java/sj/batch/stepAndJob/job/TransferNewUserJobConfiguration.java)
@@ -88,7 +88,7 @@ Spring Batch에서는 @Configuration을 통해, Job을 Bean으로 등록한다.
 테스트를 통해 위 코드를 실행 시켜보자.  
 
 
-## 2.1 테스트 작성
+### 2.1 테스트 작성
 
 [[코드참고](src/test/java/sj/batch/stepAndJob/job/TransferNewUserJobConfigurationTest.java)]
 
@@ -141,7 +141,7 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
 
 실제 로그는 아래와 같다.  
 
-![img_1.png](img_1.png)
+![job 테스트 실행 결과](src/main/resources/static/batch1_job_test_result.png)
 
 1. **첫번째 박스**  
 `TRANSFER_NEW_USER_JOB` JOB이 실행되었다. 그런데, 따라오는 parameters 값이 있다. 
@@ -153,9 +153,4 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
 Job 내부에 정의한 Step이 실행된다. Step 내부에 정의된 데이터 조회(select ~~)와 로그("1 명의 유저 정보를 AML 등의 서비스로 전송)가 찍힌 것을 확인할 수 있다.  
 
 3. **세번째 박스**
-Job이 완료되었고, 상태는 `COMPLETED`로 정상처리되었음을 의미한다.  
-
-
-# 정리
-스프링 배치가 기본적으로 어떻게 구성(job & step)되고, 그 구성을 정의하는 방식에 대해 간략하게 정리했다.  
-다음 글에서는 Job과 Step에 대해 좀 더 자세히 정리해볼 생각이다. Job과 Step의 다양한 구성방식만 조금 익혀도 간단한 배치를 하나 작성할 수 있다.  
+Job이 완료되었고, 상태는 `COMPLETED`로 정상처리되었음을 의미한다.
