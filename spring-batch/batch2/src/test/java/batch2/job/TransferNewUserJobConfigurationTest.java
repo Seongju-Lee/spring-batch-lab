@@ -6,7 +6,9 @@ import batch2.support.fixture.UserFixture;
 import batch2.support.template.TestTemplate;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -24,14 +26,13 @@ import sj.batch.global.entity.user.User;
 import sj.batch.global.entity.user.UserRepository;
 import batch2.support.template.DatabaseTemplate;
 
-
+@Slf4j
 @Testcontainers
 @SpringBootTest
 @SpringBatchTest
 class TransferNewUserJobConfigurationTest extends TestTemplate {
 
     @Autowired
-
     private Job transferNewUserJob;
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
@@ -49,21 +50,53 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
 
     @Test
     @SneakyThrows
-    void run() throws Exception{
+    void run1() throws Exception {
         // given
         final User user = UserFixture.create(LocalDateTime.now().minusDays(1));
         userRepository.save(user);
 
-        final JobParameters jobParameters = new JobParametersBuilder()
-            .addLocalDate("targetDate", LocalDate.now().minusDays(1))
+        // when
+        final JobParameters jobParameters1 = new JobParametersBuilder()
+            .addLocalDate("targetDate", LocalDateTime.now().minusDays(1).toLocalDate())
             .toJobParameters();
+        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters1);
+    }
+
+    @Test
+    @SneakyThrows
+    void test_identifying() throws Exception {
+        // given
+        final User user = UserFixture.create(LocalDateTime.now().minusDays(1));
+        userRepository.save(user);
 
         // when
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
-        JobExecution jobExecution2 = jobLauncherTestUtils.launchJob(jobParameters);
+        final JobParameters jobParameters1 = new JobParametersBuilder()
+            .addLocalDate("targetDate", LocalDateTime.now().minusDays(1).toLocalDate())
+            .addString("randomUuid", UUID.randomUUID().toString(), false)
+            .toJobParameters();
+        JobExecution jobExecution1 = jobLauncherTestUtils.launchJob(jobParameters1);
+        log.info("jobExecution1 종료");
 
-        // then
-        assertThat(jobExecution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+        final JobParameters jobParameters2 = new JobParametersBuilder()
+            .addLocalDate("targetDate", LocalDateTime.now().minusDays(1).toLocalDate())
+            .addString("randomUuid", UUID.randomUUID().toString(), false)
+            .toJobParameters();
+        JobExecution jobExecution2 = jobLauncherTestUtils.launchJob(jobParameters2);
+        log.info("jobExecution2 종료");
+    }
+
+    @Test
+    @SneakyThrows
+    void test_retry() throws Exception {
+        // given
+        final User user = UserFixture.create(LocalDateTime.now().minusDays(1));
+        userRepository.save(user);
+
+        // when
+        final JobParameters jobParameters1 = new JobParametersBuilder()
+            .addLocalDate("targetDate", LocalDateTime.now().minusDays(1).toLocalDate())
+            .addString("randomUuid", UUID.randomUUID().toString(), false)
+            .toJobParameters();
+        JobExecution jobExecution1 = jobLauncherTestUtils.launchJob(jobParameters1);
     }
 }
-

@@ -1,4 +1,5 @@
 
 dependencies {
     implementation(project(":global"))
+    testImplementation(project(":global"))
 }
