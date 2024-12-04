@@ -22,16 +22,12 @@ Spring Batch 5의 사용법을 익히고, 동작 원리 이해한다.
 ### 목차
 1. [스프링 배치 기본 구성 코드예시](지금 작성한거)
 2. [스프링 배치 기본 구성 - Job(JobInstance & JobParameters & JobExecution)](https://docs.spring.io/spring-batch/reference/domain.html#stepexecution)
-3. [Job의 구성방식 및 실행방식 - Job & JobRepository & JobLauncher 등]()
-4. [Step의 구성방식 1 - Chunk 지향 처리(Chunk-oriented Processing)]()
+3. [Job의 구성방식 및 실행방식 - Job & JobRepository & JobLauncher 등](https://docs.spring.io/spring-batch/reference/job.html) - 해당 링크 내용과 domain Language 페이지에 있는 내용 총 종합해서 적어야 함!!
+4. [Step의 구성방식 1 - Step이란? Chunk 지향 처리(Chunk-oriented Processing)]() -> step 설정, stepExecution에 대한 설명하고 시작하기!!
 5. [Step의 구성방식 2 - Tasklet Step]()
 6. [Step의 구성방식 3 - Step Flow]()
 7. [Step의 구성방식 4 - Job Scope & Step Scope (w. 지연 바인딩)](2번 내용과 밀접하게 이어짐)
 8. [Chnck 지향 처리 1 - ItemReader]()
 9. [Chnck 지향 처리 2 - ItemWriter]()
 10. [Chnck 지향 처리 3 - ItemProcessor]()
-11. [Chnck 지향 처리 3 - ItemProcessor]()
-12. [스프링 배치 메타 데이터 - Meta-Data Schema]()
-
-
-
+12. [스프링 배치 메타 데이터 - Meta-Data Schema()]()
