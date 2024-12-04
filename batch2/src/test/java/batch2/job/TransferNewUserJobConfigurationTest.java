@@ -75,14 +75,14 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
             .addString("randomUuid", UUID.randomUUID().toString(), false)
             .toJobParameters();
         JobExecution jobExecution1 = jobLauncherTestUtils.launchJob(jobParameters1);
-        log.info("jobExecution1 종료");
+//        log.info("jobExecution1 종료");
 
         final JobParameters jobParameters2 = new JobParametersBuilder()
             .addLocalDate("targetDate", LocalDateTime.now().minusDays(1).toLocalDate())
             .addString("randomUuid", UUID.randomUUID().toString(), false)
             .toJobParameters();
         JobExecution jobExecution2 = jobLauncherTestUtils.launchJob(jobParameters2);
-        log.info("jobExecution2 종료");
+//        log.info("jobExecution2 종료");
     }
 
     @Test

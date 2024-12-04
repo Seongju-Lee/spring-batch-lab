@@ -1,1 +1,5 @@
-rootProject.name = 'sj'
+rootProject.name = 'spring-batch-lab'
+
+include 'batch1_stepAndJob'
+include 'batch2'
+include 'global'
