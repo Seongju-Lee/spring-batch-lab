@@ -4,6 +4,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = {"sj.springBatch.global", "sj.springBatch.batch2"})
+@ComponentScan(basePackages = {"sj.batch.global", "batch2"})
 public class GlobalConfig {
 }
