@@ -1,4 +1,4 @@
-package batch2.support.config;
+package batch3.support.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

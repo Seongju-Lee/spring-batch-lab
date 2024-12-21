@@ -1,4 +1,4 @@
-# 2. 스프링 배치 기본 구성 - Job &
+# 2. 스프링 배치 기본 구성 - Job(JobInstance & JobParameters & JobExecution)
 
 Batch의 기본 구성에 대해 개략적으로 알아본다. 
 Batch를 구성하는 주요 컴포넌트를 살펴보고, Spring Batch가 간단한 작업부터 복잡한 애플리케이션에 이르기까지 어떻게 유지보수가 용이한 설계 방식을 가지는지 살펴본다.  

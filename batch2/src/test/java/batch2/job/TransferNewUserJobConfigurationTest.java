@@ -2,17 +2,15 @@ package batch2.job;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import batch2.support.fixture.UserFixture;
+import batch2.support.template.DatabaseTemplate;
 import batch2.support.template.TestTemplate;
-import java.time.LocalDate;
+import batch2.support.fixture.UserFixture;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.batch.core.BatchStatus;
-import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
@@ -24,7 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import sj.batch.global.entity.user.User;
 import sj.batch.global.entity.user.UserRepository;
-import batch2.support.template.DatabaseTemplate;
 
 @Slf4j
 @Testcontainers
