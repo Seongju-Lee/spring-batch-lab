@@ -1,5 +1,11 @@
+pluginManagement {
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version '2.1.0'
+    }
+}
 rootProject.name = 'spring-batch-lab'
 
 include 'batch1'
 include 'batch2'
+include 'batch3'
 include 'global'
