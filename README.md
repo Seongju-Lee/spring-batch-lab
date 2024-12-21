@@ -22,13 +22,22 @@ Spring Batch 5의 사용법을 익히고, 동작 원리 제대로 이해한다.
 ### 목차
 0. [배치 테스트 환경 setup]()
 1. [스프링 배치 기본 구성 코드예시](batch1)
-2. [스프링 배치 기본 구성 - Job(JobInstance & JobParameters & JobExecution)](batch2)
-3. [Job의 구성방식 및 실행방식 - Job & JobRepository & JobLauncher 등](batch3)
-4. [Step의 구성방식 1 - Step이란? Chunk 지향 처리(Chunk-oriented Processing)]() -> step 설정, stepExecution에 대한 설명하고 시작하기!!
-5. [Step의 구성방식 2 - Tasklet Step]()
-6. [Step의 구성방식 3 - Step Flow]()
-7. [Step의 구성방식 4 - Job Scope & Step Scope (w. 지연 바인딩)]() -> 2번 내용과 밀접하게 이어짐
+2. [Job의 기본 구성 - JobInstance & JobParameters & JobExecution](batch2)
+3. [Job의 생성원리과 동작원리 - Job & JobRepository & JobLauncher 등](batch3)
+4. [Step의 기본 구성 그리고, 생성원리와 동작원리 - StepBuilder & Step & Tasklet]() -> StepExecution도 설명!
+5. [Job과 Step의 흐름제어 - Flow]()
+6. [Scope - Job Scope & Step Scope (w. 지연 바인딩)]() -> 2번 내용과 밀접하게 이어짐
+
+위 내용까지가 SpringBatch의 기본적인 구성이라고 생각한다. 
+기본적인 구성이지만, 가장 중요하기 때문에 디버깅을 통해 동작원리를 깊게 파악해봤다.
+
+아래 이어 나오는 내용들은 SpringBath의 핵심 개념인 청크 지향 처리(Chunk-oriented Processing)와 관련된 내용이다. 
+위 내용을 기반으로 하여, 아래 내용들을 깊게 파악하고 정리했다.  
+
+---
+7. [Chunk 지향 처리 아키텍처와 기본구성 - ItemReader & ItemWriter & ItemProcessor]()
 8. [Chnck 지향 처리 1 - ItemReader]()
 9. [Chnck 지향 처리 2 - ItemWriter]()
 10. [Chnck 지향 처리 3 - ItemProcessor]()
-12. [스프링 배치 메타 데이터 - Meta-Data Schema()]()
+11. [Chnck 지향 처리 3 - ItemProcessor]()
+12[스프링 배치 메타 데이터 - Meta-Data Schema()]()
