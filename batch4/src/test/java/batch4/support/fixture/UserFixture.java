@@ -1,4 +1,4 @@
-package batch3.support.fixture;
+package batch4.support.fixture;
 
 import java.time.LocalDateTime;
 import sj.batch.global.entity.user.User;

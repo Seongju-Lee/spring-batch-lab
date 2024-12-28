@@ -1,4 +1,4 @@
-package batch3.support.template;
+package batch4.support.template;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.ActiveProfiles;

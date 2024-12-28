@@ -1,11 +1,11 @@
-package batch3.job;
+package batch4.job;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import batch3.support.fixture.UserFixture;
-import batch3.support.template.TestTemplate;
+import batch4.support.fixture.UserFixture;
+import batch4.support.template.TestTemplate;
+import batch4.support.template.DatabaseTemplate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +15,12 @@ import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import sj.batch.global.entity.user.User;
 import sj.batch.global.entity.user.UserRepository;
-import batch3.support.template.DatabaseTemplate;
 
 @Slf4j
 @Testcontainers
