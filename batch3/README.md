@@ -129,7 +129,13 @@ start() 메서드가 오버로딩 되어 있는데, 하나의 파라미터 타�
 <br>
 <img src="src/test/resources/static/img6.png" alt="" width="310" height="150">     
 
-현재 예제에서는 `step`을 인자로 넘겼기 때문에 SimpleJobBuilder를 리턴한다. 
+현재 예제에서는 `step`을 인자로 넘겼기 때문에 SimpleJobBuilder를 리턴한다.  
+그리고, `new SimpleJobBuilder.start()`를 통해서 SimpleJobBuilder를 리턴하는데, 아래 이미지를 보자.   
+
+<img src="src/test/resources/static/img21.png" alt="" width="450" height="200">  
+
+**SimpleJobBuilder 클래스는 List<Step> 타입의 steps라는 멤버변수를 가지고 있다.**
+SimpleJobBuilder::start() 메서드는 내부적으로 Job에 정의된 step들을 steps 리스트에 저장한다. 
 
 <br>
 
@@ -142,7 +148,13 @@ start() 메서드가 오버로딩 되어 있는데, 하나의 파라미터 타�
 <img src="src/test/resources/static/img8.png" alt="" width="790" height="380">
 
 결과적으로 위에 보이는 SimpleJobBuilder::build() 메서드를 호출을 통해 Job 객체를 반환 시킨다.  
-내부 로직을 보면, `new SimpleJob()`을 통해 SimpleJob을 생성해서 리턴하는 것을 확인할 수 있다.  
+내부 로직을 보면, `new SimpleJob()`을 통해 SimpleJob을 생성해서 리턴하는 것을 확인할 수 있다. 
+
+추가로 SimpleJob은 List<Step> 타입의 멤버변수인 steps를 가지고 있다.  
+
+`job.setSteps(this.steps)`를 보자.  
+**SimpleJobBuilder 필드에 저장된 steps 변수를 SimpleJob::setSteps()를 통해 SimpleJob에 업데이트 하고 있다.**  
+뒤에 나오는 내용이지만, **SimpleJob 내부에서는 이 step변수에 저장된 step들을 실행**하는 것이다.  
 
 여기서 알 수 있는 또다른 사실은 **JobBuilder가 직접 SimpleJob을 생성하지 않고, SimpleJobBuilder에게 그 역할을 위임**하는 것이다. 
 이러한 내용을 바탕으로 엔티티 관계 다이어그램을 표현하면 아래와 같다.
@@ -354,14 +366,14 @@ public abstract class AbstractJob implements Job, StepLocator, BeanNameAware, In
     
     public final void execute(JobExecution jobExecution) {
         try {
-            this.jobParametersValidator.validate(execution.getJobParameters()); // jobParameters validation
+            this.jobParametersValidator.validate(execution.getJobParameters()); // 1. jobParameters validation
             if (execution.getStatus() != BatchStatus.STOPPING) {
                 execution.setStartTime(LocalDateTime.now());
                 this.updateStatus(execution, BatchStatus.STARTED);
-                this.listener.beforeJob(execution); // beforeJob 실행 
+                this.listener.beforeJob(execution); // 2. beforeJob 실행 
 
                 try {
-                    this.doExecute(execution); // doExecute() 실행: 구현체인 SimpleJob::execute()가 실행 됨
+                    this.doExecute(execution); // 3. doExecute() 실행: 구현체인 SimpleJob::execute()가 실행 됨
                     if (logger.isDebugEnabled()) {
                         logger.debug("Job execution complete: " + execution);
                     }
@@ -375,13 +387,13 @@ public abstract class AbstractJob implements Job, StepLocator, BeanNameAware, In
         } catch (Throwable e) {
             // ...
             execution.setExitStatus(this.getDefaultExitStatusForFailure(t, execution));
-            execution.setStatus(BatchStatus.FAILED); // 예외가 발생하면, JobExecution 상태를 FAILED로 변경
+            execution.setStatus(BatchStatus.FAILED); // 4. 예외가 발생하면, JobExecution 상태를 FAILED로 변경
             execution.addFailureException(t);
         } finally {
-            execution.setEndTime(LocalDateTime.now()); // JobExecution이 종료되었으므로, EndTime을 저장
+            execution.setEndTime(LocalDateTime.now()); // 5. JobExecution이 종료되었으므로, EndTime을 저장
 
-            this.listener.afterJob(execution); // afterJob 실행
-            this.jobRepository.update(execution); // JobExecution의 데이터를 저장
+            this.listener.afterJob(execution); // 5. afterJob 실행
+            this.jobRepository.update(execution); // 5. JobExecution의 데이터를 저장
             JobSynchronizationManager.release();
         }
     }
@@ -404,7 +416,7 @@ public abstract class AbstractJob implements Job, StepLocator, BeanNameAware, In
 
 
 근데, 여기서 한 가지 넘어간 부분이 있다. 바로, JobExecution의 상태를 `COMPLETED`로 변경하는 부분이다. 
-해당 로직은 사실 doExecute() 구현체인 SimpleJob::doExecute()에 있는데, 해당 로직은 대부분 Step 내용이 포함되어 있어 step 관련 글에서 별도로 설명한다.  
+해당 로직은 사실 doExecute() 구현체인 SimpleJob::doExecute()에 있는데, 해당 로직은 대부분 Step 내용이 포함되어 있어 [step 관련 글](../batch4/README.md)에서 별도로 설명한다.  
 여기서는 "SimpleJob::doExecute()가 COMPLETED 상태로 변경한다" 정도만 이해해두려고 한다.  
 
 위 내용을 기반으로 메서드 호출구조가 아래와 같다고 이해하면 된다.  
