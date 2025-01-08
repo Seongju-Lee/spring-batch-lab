@@ -27,7 +27,7 @@ Spring Batch 5의 사용법을 익히고, 동작 원리 제대로 이해한다.
 4. [Step의 기본 구성과 생성원리, 그리고 실행원리 - StepBuilder & Step](batch4)
 5. [Tasklet과 TaskletStep](batch5)
 6. [Job과 Step의 흐름제어 - Flow]() (진행중)
-7. [Scope - Job Scope & Step Scope (w. 지연 바인딩)]() -> 2번 내용과 밀접하게 이어짐
+7. [Scope - Job Scope & Step Scope (w. 지연 바인딩)](batch7)
 
 위 내용까지가 SpringBatch의 기본적인 구성이라고 생각한다. 
 기본적인 구성이지만, 가장 중요하기 때문에 디버깅을 통해 동작원리를 깊게 파악해봤다.
