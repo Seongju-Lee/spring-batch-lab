@@ -2,9 +2,9 @@ package batch8.job;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import batch7.support.fixture.UserFixture;
-import batch7.support.template.TestTemplate;
-import batch7.support.template.DatabaseTemplate;
+import batch8.support.fixture.UserFixture;
+import batch8.support.template.TestTemplate;
+import batch8.support.template.DatabaseTemplate;
 import java.time.LocalDateTime;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
