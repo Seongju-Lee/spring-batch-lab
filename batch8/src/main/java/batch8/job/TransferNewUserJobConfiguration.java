@@ -1,8 +1,8 @@
 package batch8.job;
 
-import batch7.service.UserService;
+import batch8.service.UserService;
+import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDate;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -12,8 +12,12 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.batch.item.function.FunctionItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,14 +31,13 @@ public class TransferNewUserJobConfiguration {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
-    private static final String JOB_NAME = "TRANSFER_NEW_USER_JOB";
-    private static final String STEP_1_NAME = "TRANSFER_NEW_USER_STEP";
+    private final EntityManagerFactory entityManagerFactory;
 
-    private final UserService userService;
+    private static final int CHUNK_SIZE = 50;
 
     @Bean
     public Job transferNewUserJob() {
-        return new JobBuilder(JOB_NAME, jobRepository)
+        return new JobBuilder("TRANSFER_NEW_USER_JOB", jobRepository)
             .start(transferNewUserStep(null))
             .build();
     }
@@ -44,18 +47,46 @@ public class TransferNewUserJobConfiguration {
     public Step transferNewUserStep(
         @Value("#{jobParameters['targetDate']}") LocalDate targetDate
     ) {
-        return new StepBuilder(STEP_1_NAME, jobRepository)
-            .tasklet(transferNewUserStep1Tasklet(targetDate), platformTransactionManager)
+        return new StepBuilder("TRANSFER_NEW_USER_STEP", jobRepository)
+            .<User, User>chunk(CHUNK_SIZE, platformTransactionManager)
+            .reader(reader())
+            .processor(processor(null))
+            .writer(writer())
             .build();
     }
 
     @Bean
     @StepScope
-    public Tasklet transferNewUserStep1Tasklet(LocalDate targetDate) {
-        return (contribution, chunkContext) -> {
-            final List<User> users = userService.findByRegisteredDate(targetDate);
-            log.info("{} 명의 유저 정보를 AML 등의 서비스로 전송", users.size());
-            return RepeatStatus.FINISHED;
-        };
+    public JpaPagingItemReader<User> reader() {
+        return new JpaPagingItemReaderBuilder<User>()
+            .name("TRANSFER_NEW_USER_STEP_READER")
+            .entityManagerFactory(entityManagerFactory)
+            .queryString("""
+                SELECT u
+                FROM User u
+                """)
+            .pageSize(CHUNK_SIZE)
+            .build();
+    }
+
+    @Bean
+    @StepScope
+    public ItemProcessor<User, User> processor(
+        @Value("#{jobParameters['targetDate']}") final LocalDate targetDate
+    ) {
+        return new FunctionItemProcessor<>(user -> {
+            if (user.getRegisteredAt().toLocalDate().isEqual(targetDate)) {
+                return user;
+            }
+            return null;
+        });
+    }
+
+    @Bean
+    @StepScope
+    public ItemWriter<User> writer() {
+        return chunk -> chunk.getItems().forEach(user ->
+            log.info("DB에 유저 정보 저장 =>  id: {}, name: {}", user.getId(), user.getName())
+        );
     }
 }
