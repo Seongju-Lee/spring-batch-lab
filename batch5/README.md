@@ -192,8 +192,8 @@ public class TaskletStep extends AbstractStep {
 위 `TaskletStep::doExecute()` 메서드에서 `Tasklet::execute()`를 실행한다.  
 
 `this.stepOperations.iterate()`가 Tasklet을 반복 실행하는 역할을 담당한다. 
-생성자를 잘 보면, stepOperations의 실제 구현체는 `RepeatTemplate` 타입이다. 그렇다면, 이 `RepeatTemplate` 타입은 무엇일까?? 알아보자.   
-_(참고로 `TaskletStep(String name)` 생성자와 `setStepOperations()` 메서드는 AbstractTaskletStepBuilder.build()에서 TaskletStep을 생성할 때 호출된다. 그리고, )_
+생성자를 잘 보면, **stepOperations의 실제 구현체는 `RepeatTemplate` 타입**이다. 그렇다면, 이 `RepeatTemplate` 타입은 무엇일까?? 알아보자.   
+_(참고로 `TaskletStep(String name)` 생성자와 `setStepOperations()` 메서드는 AbstractTaskletStepBuilder.build()에서 TaskletStep을 생성할 때 호출된다.)_
 
 
 <br>
@@ -202,13 +202,15 @@ _(참고로 `TaskletStep(String name)` 생성자와 `setStepOperations()` 메서
 
 ```java
 public class RepeatTemplate implements RepeatOperations {
+
+    private CompletionPolicy completionPolicy = new DefaultResultCompletionPolicy();
     
     public RepeatStatus iterate(RepeatCallback callback) {
         RepeatContext outer = RepeatSynchronizationManager.getContext();
         RepeatStatus result = RepeatStatus.CONTINUABLE;
 
         try {
-            result = this.executeInternal(callback);
+            result = this.executeInternal(callback); // 1. callback 로직을 그대로 전달
         } finally {
             RepeatSynchronizationManager.clear();
             if (outer != null) {
@@ -221,29 +223,23 @@ public class RepeatTemplate implements RepeatOperations {
     }
 
     private RepeatStatus executeInternal(final RepeatCallback callback) {
-        boolean running = !this.isMarkedComplete(context);
+        boolean running = !this.isMarkedComplete(context); // 2. CONTINUABLE
 
-        while(true) {
-            if (!running) {
-                // ...
-                break;
-            }
-            
+        while(running) {
             // ...
-            
-            if (running) {
-                try {
-                    result = this.getNextResult(context, callback, state);
-                    this.executeAfterInterceptors(context, result);
-                } catch (Throwable var84) {
-                    this.doHandle(var84, context, deferred);
-                }
-
+            if (running) { // 2. RepeatStatus가 CONTINUABLE인 경우 true
+                
+                result = this.getNextResult(context, callback, state);
+                this.executeAfterInterceptors(context, result);
+                
+                // ...
+                // 5. Tasklet 실행 후, result 결과가 CONTINUABLE이 아닌 경우, 반복문 종료
                 if (this.isComplete(context, result) || this.isMarkedComplete(context) || !deferred.isEmpty()) {
                     running = false;
                 }
             }
         }
+        // ...
         return result;
     }
 
@@ -252,18 +248,47 @@ public class RepeatTemplate implements RepeatOperations {
         if (this.logger.isDebugEnabled()) {
             this.logger.debug("Repeat operation about to start at count=" + context.getStartedCount());
         }
-        return callback.doInIteration(context);
+        return callback.doInIteration(context); // 4. TaskletStep::doExecute()에서 익명 내부 클래스로 정의한 doInChunkContext() 메서드 호출
+    }
+
+    
+    protected boolean isComplete(RepeatContext context, RepeatStatus result) {
+        // 6. 여기서, completionPolicy의 구현체 타입은 DefaultResultCompletionPolicy으로, RepeatStatus.CONTINUABLE이 아닌 경우 true 리턴
+        boolean complete = this.completionPolicy.isComplete(context, result); 
+        if (complete) {
+            this.logger.debug("Repeat is complete according to policy and result value.");
+        }
+
+        return complete;
     }
 }
 ```
 
 1. iterate()는 인자로 전달받은 `RepeatCallback` 타입의 값을 `executeInternal()`으로 전달한다.
+
 2. `executeInternal()`는 running 값을 조건으로 하여 현재 실행 상태가 완료상태인지 확인한다.(`RepeatStatus.CONTINUABLE`이면 true 반환)
+
 3. 완료 상태가 아니라면, `getNextResult()` 메서드를 호출한다. 
+
 4. `getNextResult()` 메서드는 내부적으로 `RepeatCallback::doInIteration()`메서드를 호출한다. 
-이때, `callback` 파라미터에는 TaskletStep::doExecute()에서 RepeatTemplate::iterate()를 호출할 때, 정의한 구현체 인스턴스가 인자로 넘어온다.   
-5. 즉, `StepContextRepeatCallback`타입의 callback 인자가 넘어온다.
-6. 그리고, Tasklet을 호출한 결과를 반환하는 것이다. 즉, `getNextResult()` 반환 결과가 `RepeatStatus.FINISHED`인 경우 반복문이 종료된다.  
+이때, `callback` 파라미터에는 TaskletStep::doExecute()에서 RepeatTemplate::iterate()를 호출할 때, 정의한 구현체 인스턴스가 인자로 넘어온다. **즉, `StepContextRepeatCallback`타입의 callback 인자가 넘어온다.** 
+그리고, `TaskletStep::doExecute()` 내부에서 익명 내부 클래스로 정의한 `doInChunkContext()` 로직이 호출된다.  
+
+5. 그리고, Tasklet을 호출한 결과를 반환하는 것이다. 즉, `getNextResult()` 반환 결과가 `RepeatStatus.CONTINUABLE`이 아닌 경우 반복문이 종료된다.  
+
+6. completionPolicy은 `CompletionPolicy` 인터페이스 타입의 필드다. 이는 배치 처리의 완료 여부를 반환하는 정책을 정의한 인터페이스다. 
+디폴트 타입은 `DefaultResultCompletionPolicy`이고, 내부 구현 로직은 아래와 같다.  
+
+    ```java
+    public class DefaultResultCompletionPolicy extends CompletionPolicySupport {
+    
+        public boolean isComplete(RepeatContext context, RepeatStatus result) {
+            return result == null || !result.isContinuable(); // isContinuable() => (return this == CONTINUABLE;)
+        }
+    }
+    ```
+   Tasklet 실행 결과가 `CONTINUABLE`이 아닌 경우에 true를 리턴한다.
+    
 
 <br>
 
