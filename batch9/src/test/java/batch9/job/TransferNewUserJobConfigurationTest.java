@@ -6,6 +6,7 @@ import batch9.support.fixture.UserFixture;
 import batch9.support.template.DatabaseTemplate;
 import batch9.support.template.TestTemplate;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import sj.batch.global.entity.user.User;
 import sj.batch.global.entity.user.UserRepository;
@@ -27,10 +30,11 @@ import sj.batch.global.entity.user.UserRepository;
 @Testcontainers
 @SpringBootTest
 @SpringBatchTest
-class TransferNewUserJobConfigurationTest extends TestTemplate {
+@ActiveProfiles("test")
+class TransferNewUserJobConfigurationTest extends TestTemplate{
 
     @Autowired
-    private Job transferNewUserJob;
+    private Job jdbcCursorReaderJob;
     @Autowired
     private JobLauncher jobLauncher;
 
@@ -40,7 +44,7 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
     private DatabaseTemplate databaseTemplate;
 
     @BeforeEach
-    void setup() {
+    public void setup() {
         databaseTemplate.truncate();
     }
 
@@ -48,13 +52,17 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
     @SneakyThrows
     void run() throws Exception {
         // given
-        final User user = UserFixture.create(LocalDateTime.now().minusDays(1));
-        userRepository.save(user);
+        List<User> users = List.of(
+            UserFixture.create("sj"),
+            UserFixture.create("sj2"),
+            UserFixture.create("sj3"),
+            UserFixture.create("sj4"),
+            UserFixture.create("sj5"),
+            UserFixture.create("sj6")
+        );
+        userRepository.saveAll(users);
 
         // when
-        final JobParameters jobParameters1 = new JobParametersBuilder()
-            .addLocalDate("targetDate", LocalDateTime.now().minusDays(1).toLocalDate())
-            .toJobParameters();
-        JobExecution jobExecution = jobLauncher.run(transferNewUserJob, jobParameters1);
+        jobLauncher.run(jdbcCursorReaderJob, new JobParameters());
     }
 }
