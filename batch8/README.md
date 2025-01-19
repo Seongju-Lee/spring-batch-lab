@@ -342,6 +342,8 @@ protected final I doRead() throws Exception {
 `SimpleChunkProvider`에서 초기화 되어 있는 `RepeatTemplate`의 `CompletionPolicy`는 `SimpleCompletionPolicy` 클래스의 객체가 초기화 되어 있다. 
 그리고, SimpleCompletionPolicy가 구현하고 있는 `isComplete()` 메서드는 아래와 같다. 
 
+`read()` 메서드에 대해서는 [ItemReader 챕터](../batch9/README.md)에서 설명하고 있으니 참고하자. 
+
 ```java
 public class SimpleCompletionPolicy extends DefaultResultCompletionPolicy {
     public boolean isComplete() {
