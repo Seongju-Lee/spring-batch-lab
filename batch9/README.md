@@ -222,7 +222,119 @@ jdbc에서 제공하는 RowMapper 인터페이스는 함수형 인터페이스�
 
 ---
 
-#### 9.3.4.2 ㅓ
+#### 9.3.4.2 JpaCursorItemReader
+
+`JpaCursorItemReader`는 jpa의 `Query`객체를 사용해서 데이터를 읽어들인다. 
+정확히는 `Query.getResultStream()`을 통해 데이터 목록을 조회해오고, 이를 `Stream`으로 변환한다. 
+그리고, `Stream.iterator()`을 통해 `Iterator`로 변환한다. 
+**여기까지가 `open()` 메서드의 역할**이다. 아래가 JpaCursorItemReader의 open() 메서드다.  
+```java
+void doOpen() {
+    this.entityManager = this.entityManagerFactory.createEntityManager();
+    // ...
+    Query query = this.createQuery();
+    this.iterator = query.getResultStream().iterator();
+}
+```
+
+이후, read() 메서드가 호출되면 iterator를 통해 데이터를 하나씩 조회해온다. 아래는 read() 메서드다.  
+```java
+T doRead() {
+    return this.iterator.hasNext() ? this.iterator.next() : null;
+}
+```
+
+즉, jpa에서 제공하는 Query#getResultStream()을 사용한 커서 방식을 이용한 ItemReader라고 이해하면 좋을 듯하다.  
+
+예제코드는 [여기서](../batch9/src/main/java/batch9/job/JpaCursorReaderExampleConfiguration.java) 확인 가능하다.
+
+----
+
+### 9.3.5 Paging 기반의 ItemReader
+
+Spring Batch에서 제공하는 많은 ItemReader 구현체들 중, 여기서 알아볼 Paging 기반의 구현체는 아래와 같이 있다.
+- JpaPagingItemReader
+
+`JdbcPagingItemReader` 방식도 있지만, 현재 Jpa 기반으로 pagingReader를 구성하고 있어서 `JpaPagingItemReader`만 파악해보려고 한다.
+(JdbcPagingItemReader는 JdbcCursorItemReader 방식에서의 JdbcTemplate과 페이징 방식을 조화롭게 사용하고 있지않을까 예측해본다.. 기회가 되면 파악해보기로..)
 
 
+#### 9.3.5.1 JpaPagingItemReader
+
+우선, `JpaPagingItemReader`를 사용해서 Reader를 구성한 청크 지향 배치 설정을 코드로 살펴보자.  
+
+```java
+@Slf4j
+@Configuration
+@RequiredArgsConstructor
+public class JpaPagingReaderExampleConfiguration {
+
+    private final JobRepository jobRepository;
+    private final PlatformTransactionManager platformTransactionManager;
+    private final EntityManagerFactory entityManagerFactory;
+
+    private static final int CHUNK_SIZE = 2;
+
+    @Bean
+    public Job jpaPagingReaderJob() {
+        return new JobBuilder("jpaPagingReaderJob", jobRepository)
+            .start(jpaPagingReaderStep())
+            .build();
+    }
+
+    @Bean
+    public Step jpaPagingReaderStep() {
+        return new StepBuilder("jpaPagingReaderStep", jobRepository)
+            .<User, User>chunk(CHUNK_SIZE, platformTransactionManager)
+            .reader(jpaPagingReader())
+            .writer(writer())
+            .build();
+    }
+
+    @Bean
+    public JpaPagingItemReader<User> jpaPagingReader() {
+        return new JpaPagingItemReaderBuilder<User>()
+            .name("jpaPagingItemReader")
+            .entityManagerFactory(entityManagerFactory)
+            .queryString("select u from User u order by u.id")
+            .pageSize(10)
+            .build();
+    }
+
+    @Bean
+    public ItemWriter<User> writer() {
+        return item -> log.info("User 정보 => {}", item);
+    }
+}
+```
+
+`JpaPagingItemReaderBuilder`를 사용해 `JpaPagingItemReader`를 생성한다. 설정값을 살펴보자.  
+
+- `name`: `ExecutionContext`에 상태를 저장하고 관리되기 위한 이름을 지정한다. 
+- `entityManagerFactory`: EntityManager를 생성하는 팩토리 클래스를 지정
+- `queryString`: JPQL 지정
+- `pageSize`: 페이징 조회를 위해, 쿼리당 가져올 아이템 갯수를 지정
+
+구조 자체는 `JpaCursorItemReader`와 동일하다. 데이터를 조회하는 방식이 Stream이 아닌 List인 것만 다르다.  
+즉 Query#getResultStream()을 통해 stream을 얻는 것이 아닌, Query#getResultList()를 통해 DB 데이터를 페이지 크기만큼 조회하여 메모리에 로드하는 방식이다.   
+
+read() 메서드가 호출되면 아래 메서드가 호출된다. 아래 메서드느 JpaCursorItemReader에 정의된 `doReadPage()` 메서드다.  
+
+```java
+void doReadPage() {
+        EntityTransaction tx = null;
+        // ...
+        Query query = this.createQuery().setFirstResult(this.getPage() * this.getPageSize()).setMaxResults(this.getPageSize());
+        // ...
+    
+        List<T> queryResult = query.getResultList();
+        Iterator var7 = queryResult.iterator();
+
+        while(var7.hasNext()) {
+            T entity = var7.next();
+            this.entityManager.detach(entity);
+            this.results.add(entity);
+        }
+    }
+```
 

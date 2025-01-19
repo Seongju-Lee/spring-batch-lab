@@ -37,7 +37,7 @@ Spring Batch 5의 사용법을 익히고, 동작 원리 제대로 이해한다.
 
 ---
 8. [Chunk 지향 처리 방식의 기본구성과 아키텍처](batch8)
-9. [Chnck 지향 처리 1 - ItemReader]()
+9. [Chnck 지향 처리 1 - ItemReader](batch9)
 10. [Chnck 지향 처리 2 - ItemWriter]()
 11. [Chnck 지향 처리 3 - ItemProcessor]()
 12. [스프링 배치 메타 데이터 - Meta-Data Schema]()

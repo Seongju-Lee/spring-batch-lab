@@ -1,6 +1,6 @@
 package batch9.job;
 
-import javax.sql.DataSource;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -9,8 +9,8 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
-import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -19,38 +19,37 @@ import sj.batch.global.entity.user.User;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class JdbcCursorReaderExampleConfiguration {
+public class JpaPagingReaderExampleConfiguration {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
-    private final DataSource dataSource; // DB에 연결하기 위한 Datasource 객체
+    private final EntityManagerFactory entityManagerFactory;
 
     private static final int CHUNK_SIZE = 2;
 
     @Bean
-    public Job jdbcCursorReaderJob() {
-        return new JobBuilder("jdbcCursorReaderJob", jobRepository)
-            .start(jdbcCursorReaderStep())
+    public Job jpaPagingReaderJob() {
+        return new JobBuilder("jpaPagingReaderJob", jobRepository)
+            .start(jpaPagingReaderStep())
             .build();
     }
 
     @Bean
-    public Step jdbcCursorReaderStep() {
-        return new StepBuilder("jdbcCursorReaderStep", jobRepository)
+    public Step jpaPagingReaderStep() {
+        return new StepBuilder("jpaPagingReaderStep", jobRepository)
             .<User, User>chunk(CHUNK_SIZE, platformTransactionManager)
-            .reader(jdbcCursorReader())
+            .reader(jpaPagingReader())
             .writer(writer())
             .build();
     }
 
     @Bean
-    public JdbcCursorItemReader<User> jdbcCursorReader() {
-        return new JdbcCursorItemReaderBuilder<User>()
-            .name("jdbcCursorItemReader")
-            .beanRowMapper(User.class) // 쿼리 결과를 인스턴스와 매핑하기 위한 Mapper 객체, 내부적으로 BeanPropertyRowMapper를 사용해서 rowMapper 필드에 설정
-            .dataSource(dataSource)
-            .fetchSize(CHUNK_SIZE)
-            .sql("select * from users")
+    public JpaPagingItemReader<User> jpaPagingReader() {
+        return new JpaPagingItemReaderBuilder<User>()
+            .name("jpaPagingItemReader")
+            .entityManagerFactory(entityManagerFactory)
+            .queryString("select u from User u order by u.id")
+            .pageSize(10)
             .build();
     }
 
