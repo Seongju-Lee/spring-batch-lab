@@ -34,10 +34,10 @@ public class CustomReader implements ItemReader<String>, StepExecutionListener {
 
         // 현재 처리 중인 데이터 저장
         executionContext.putInt("current.index", currentIndex);
-//        if (data.get(currentIndex).equals("C")) { // 예: C에서 실패
-//            executionContext.putString("failed.item", "C");
-//            throw new RuntimeException("Processing failed for item: " + "C");
-//        }
+        if (data.get(currentIndex).equals("C")) { // 예: C에서 실패
+            executionContext.putString("failed.item", "C");
+            throw new RuntimeException("Processing failed for item: " + "C");
+        }
         return data.get(currentIndex++);
     }
 
