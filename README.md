@@ -26,18 +26,7 @@ Spring Batch 5의 사용법을 익히고, 동작 원리 제대로 이해한다.
 3. [Job의 구성방식 및 실행방식 - JobLauncher & Job & JobRepository](batch3)
 4. [Step의 기본 구성과 생성원리, 그리고 실행원리 - StepBuilder & Step](batch4)
 5. [Tasklet과 TaskletStep](batch5)
-6. [Job과 Step의 흐름제어 - Flow]() (진행중)
 7. [Scope - Job Scope & Step Scope (w. 지연 바인딩)](batch7)
-
-위 내용까지가 SpringBatch의 기본적인 구성이라고 생각한다. 
-기본적인 구성이지만, 가장 중요하기 때문에 디버깅을 통해 동작원리를 깊게 파악해봤다.
-
-아래 이어 나오는 내용들은 SpringBath의 핵심 개념인 청크 지향 처리(Chunk-oriented Processing)와 관련된 내용이다. 
-위 내용을 기반으로 하여, 아래 내용들을 깊게 파악하고 정리했다.  
-
----
 8. [Chunk 지향 처리 방식의 기본구성과 아키텍처](batch8)
 9. [Chnck 지향 처리 1 - ItemReader](batch9)
-10. [Chnck 지향 처리 2 - ItemWriter]()
-11. [Chnck 지향 처리 3 - ItemProcessor]()
-12. [스프링 배치 메타 데이터 - Meta-Data Schema]()
+10. [스프링 배치 메타 데이터 - Meta-Data Schema](batch10)
