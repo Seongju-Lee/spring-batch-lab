@@ -35,17 +35,16 @@ class TransferNewUserJobConfigurationTest {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private DatabaseTemplate databaseTemplate;
+//    @Autowired
+//    private DatabaseTemplate databaseTemplate;
 
     @BeforeEach
     void setup() {
-        databaseTemplate.truncate();
+//        databaseTemplate.truncate();
         jobLauncherTestUtils.setJob(transferNewUserJob);
     }
 
     @Test
-    @SneakyThrows
     void run() throws Exception {
         // given
         final List<User> users = List.of(
