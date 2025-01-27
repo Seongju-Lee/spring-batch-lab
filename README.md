@@ -19,7 +19,6 @@ Spring Batch 5의 사용법을 익히고, 동작 원리 제대로 이해한다.
 - Java 21
 
 ### 목차
-0. [배치 테스트 환경 setup]()
 1. [스프링 배치 기본 구성 코드예시](batch1)
 2. [스프링 배치 기본 구성 - Job(JobInstance & JobParameters & JobExecution)](batch2)
 3. [Job의 구성방식 및 실행방식 - JobLauncher & Job & JobRepository](batch3)

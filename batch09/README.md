@@ -62,13 +62,13 @@ public interface ItemStream {
 (JDBC의 ResultSet 메커니즘을 그대로 사용하는)Cursor 기반 조회는 데이터를 한번에 메모리에 로드하지 않고, 스트리밍 방식으로 메모리에 올린다. 
 즉 Reader 단계에서 DB와 conn을 맺으면, 데이터를 다 로드할 때까지 다음 데이터를 하나씩 가져오는 방식이다. 
 
-![img.png](img.png)
+![img.png](src/test/resources/static/img.png)
 
 <br>
 
 Paging 기반 조회는 페이징 단위로 연결을 맺고 끊는 방식이다. 즉, 하나의 DB connection에 대해 설정한 page size만큼 데이터를 메모리에 로드하는 방식이다. 
 
-![img_1.png](img_1.png)
+![img_1.png](src/test/resources/static/img_1.png)
 
 
 ### 9.3.4 Cursor 기반의 ItemReader
@@ -209,15 +209,15 @@ jdbc에서 제공하는 RowMapper 인터페이스는 함수형 인터페이스�
 위 예제를 실행해보며, 조회 결과를 살펴보자.   
 
 더미 데이터는 아래와 같이 6개를 넣고, chunk size는 2로 지정한 후 실행시켜보자. 
-![img_2.png](img_2.png)
+![img_2.png](src/test/resources/static/img_2.png)
 
 실행 결과는 아래와 같이 3번의 writer 로직이 호출된다. 총 6개의 데이터를 한 번의 read작업에서 fetchSize 만큼 가져오기 때문이다.  
-![img_3.png](img_3.png)
+![img_3.png](src/test/resources/static/img_3.png)
 
 스트리밍 방식으로 데이터를 가져오는 방식이다. 즉, 데이터를 읽어들이는 시점부터 배치가 끝날때까지 하나의 커넥션이 끊기지 않는다.  
 다이어그램으로 표현하면 아래와 같다.  
 
-![img_4.png](img_4.png)
+![img_4.png](src/test/resources/static/img_4.png)
 
 
 ---
@@ -246,7 +246,7 @@ T doRead() {
 
 즉, jpa에서 제공하는 Query#getResultStream()을 사용한 커서 방식을 이용한 ItemReader라고 이해하면 좋을 듯하다.  
 
-예제코드는 [여기서](../batch9/src/main/java/batch9/job/JpaCursorReaderExampleConfiguration.java) 확인 가능하다.
+예제코드는 [여기서](/src/main/java/batch9/job/JpaCursorReaderExampleConfiguration.java) 확인 가능하다.
 
 ----
 
