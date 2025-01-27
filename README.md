@@ -4,15 +4,6 @@
 [Spring Batch 5 Docs](https://docs.spring.io/spring-batch/reference)와 디버깅을 기반으로 Deep-Dive   
 각 모듈 README에 디버깅 내용과 동작 원리 등을 정리 함   
 
-
-### 목적
-Spring Batch 5의 사용법을 익히고, 동작 원리 제대로 이해한다.    
-더 나아가 아래와 같은 내용을 파악하는데 초점을 둔다.  
-- Spring Batch 사용법 101(구성방식, 작동원리(=Deep-Dive))
-- Spring Batch 아키텍처
-- 기본적인 배치 원칙과 처리 전략
-
-
 ### 버전
 - SpringBoot 3
 - Spring Batch 5
