@@ -219,6 +219,7 @@ ExecutionContext의 개념에 대해 알아보기 전에, 가볍게 StepExecutio
 - `SHORT_CONTEXT`: SERIALIZER_CONTEXT의 String version   
 - `SERIALIZED_CONTEXT`: 직렬화된 ExecutionContext
 
+<br>
 
 **STEP_EXECUTION_CONTEXT**    
 
