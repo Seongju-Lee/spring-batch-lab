@@ -1,21 +1,14 @@
 package batch3.job;
 
+import batch3.service.UserService;
 import java.time.LocalDate;
 import java.util.List;
-import batch3.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobScope;
-import org.springframework.batch.core.job.builder.FlowBuilder;
-import org.springframework.batch.core.job.builder.FlowJobBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.job.builder.JobBuilderHelper;
-import org.springframework.batch.core.job.builder.JobFlowBuilder;
-import org.springframework.batch.core.job.builder.SimpleJobBuilder;
-import org.springframework.batch.core.job.flow.Flow;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.repeat.RepeatStatus;

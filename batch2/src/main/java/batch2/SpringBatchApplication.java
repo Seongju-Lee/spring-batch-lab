@@ -1,4 +1,4 @@
-package batch3;
+package batch2;
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;

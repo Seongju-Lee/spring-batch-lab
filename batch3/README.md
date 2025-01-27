@@ -300,7 +300,7 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
 #### 3.1.2.2 [JobLauncher::run()의 동작 방식 1] 
 <img src="src/test/resources/static/img10.png" alt="" width="370" height="95">   
 
-JobLauncher는 run() 메서드 하나만 정의해놓은 함수형 인터페이스다. run()을 통해 Job을 실행시키고, 실행을 의미하는 JobExecution을 반환한다. [(batch2 참고)](../batch2/README.md)  
+JobLauncher는 run() 메서드 하나만 정의해놓은 함수형 인터페이스다. run()을 통해 Job을 실행시키고, 실행을 의미하는 JobExecution을 반환한다. [(batch3 참고)](../batch2/README.md)  
 JobLuancher 인터페이스의 구현체는 두 가지가 있다. `TaskExecutorJobLauncher`와 `SimpleJobLauncher`이다. 정확히는 `TaskExecutorJobLauncher`가 `SimpleJobLauncher`를 상속받아 처리하고 있는데, 
 이는 deprecated 될(or 된)  `SimpleJobLauncher`를 확장한 클래스라고 이히하면 된다. 아래는  `TaskExecutorJobLauncher` 코드다.  
 
@@ -407,7 +407,7 @@ public abstract class AbstractJob implements Job, StepLocator, BeanNameAware, In
    - **beforeJob(JobExecution jobExecution)**: Job 실행 전 호출
    - **afterJob(JobExecution jobExecution)**: Job 실행 후 호출  
    
-   위 두 메서드가 각각 Job 실행 전/후에 실행되는 이유가 바로 이 코드에 있는 것이다. [JobExecutionListener를 구현하는 예시 코드](src/main/java/batch3/job/BatchJobExecutionListener.java)를 통해 명확하게 확인해볼 수 있다.  
+   위 두 메서드가 각각 Job 실행 전/후에 실행되는 이유가 바로 이 코드에 있는 것이다. [JobExecutionListener를 구현하는 예시 코드](src/main/java/batch2/job/BatchJobExecutionListener.java)를 통해 명확하게 확인해볼 수 있다.  
 
 3. `this.doExecute()`를 통해 정의한 Job이 실행된다. 여기서는 this의 주체가 SimpleJob이다. 그리고, SimpleJob은 doExecute()를 구현하고 있다. 
 즉, `SimpleJob::doExecute()`가 실행된다. 위에서 정의한 `TRANSFER_NEW_USER_JOB`이 실행된다.

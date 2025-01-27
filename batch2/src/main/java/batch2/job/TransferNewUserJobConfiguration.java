@@ -1,8 +1,8 @@
-package batch3.job;
+package batch2.job;
 
 import java.time.LocalDate;
 import java.util.List;
-import batch3.service.UserService;
+import batch2.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
