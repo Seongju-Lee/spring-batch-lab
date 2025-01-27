@@ -108,7 +108,7 @@ CREATE TABLE BATCH_JOB_INSTANCE  (
 예시에서 실행한 `transferNewUserJob`이 저장되어있다.   
 여기서, `JOB_KEY`는 `Job Parameters`를 해싱한 결과 값이다. 이걸 또 다르게 말하면, Job은 Job Parameters와 Job Name으로 고유함을 나타내는 것이다. 
 때문에, 하나의 Job에서 동일한 Job Parameters을 주어 실행하면, 중복 Job 실행이라고 하면서 에러가 발생하는 것이다.(`JobInstanceAlreadyCompleteException`)    
-[관련 정리 글 참고 - batch2](../batch2)
+[관련 정리 글 참고 - batch3](../batch2)
 
 
 ---
@@ -176,7 +176,7 @@ status에 저장되는 `BatchStatus` 값은 Job의 현재 상태를 정의해놓
 `JOB_INSTANCE`의 중복 여부를 판단할 때, key 값은 `Job Parameters`를 해싱한 값이라고 했다. 
 이때 `JobParameter`별로 해싱에 참여시킬지 말지 결정할 수 있는데, 그 boolean 값이 바로 `identifying`이다.  
 
-즉, 이녀석을 false로 하면 Job의 중복 여부를 결정하는데 아무런 영향이 없음을 의미한다. [identifying의 자세한 내용 - batch2](../batch2)
+즉, 이녀석을 false로 하면 Job의 중복 여부를 결정하는데 아무런 영향이 없음을 의미한다. [identifying의 자세한 내용 - batch3](../batch2)
 
 ---
 
