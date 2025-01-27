@@ -80,6 +80,7 @@ public class TransferNewUserJobConfiguration {
 
 그리고, 테스트 데이터는 총 User 데이터를 6개 저장했다. `registeredAt`은 다 하루 전으로 저장했기 때문에, processor에서 하나도 걸러지지 않는다.  
 
+---
 
 ## 10.1 JOB_INSTANCE
 
@@ -108,7 +109,7 @@ CREATE TABLE BATCH_JOB_INSTANCE  (
 예시에서 실행한 `transferNewUserJob`이 저장되어있다.   
 여기서, `JOB_KEY`는 `Job Parameters`를 해싱한 결과 값이다. 이걸 또 다르게 말하면, Job은 Job Parameters와 Job Name으로 고유함을 나타내는 것이다. 
 때문에, 하나의 Job에서 동일한 Job Parameters을 주어 실행하면, 중복 Job 실행이라고 하면서 에러가 발생하는 것이다.(`JobInstanceAlreadyCompleteException`)    
-[관련 정리 글 참고 - batch3](../batch2)
+[관련 정리 글 참고 - batch3](../batch03)
 
 
 ---
@@ -121,7 +122,7 @@ CREATE TABLE BATCH_JOB_INSTANCE  (
 ![img_4.png](src/main/resources/static/img_4.png)
 
 - `JOB_INSTANCE_ID`는 위에서 살펴본 Job id를 의미한다. `JOB_INSTANCE`를 실행시킨 녀석이니 당연히 id를 가지고 있어야 한다. 
-- `CREATE_TIME`은 `JobExecution`이 생성된 시간을 의미한다. ([JobExecution의 생성과 실행 - batch3](../batch3))
+- `CREATE_TIME`은 `JobExecution`이 생성된 시간을 의미한다. ([JobExecution의 생성과 실행 - batch03](../batch03))
 - `START_TIME`은 배치 작업이 실제로 시작된 시점이다. 당연히 `END_TIME`은 작업이 완료된 시점이다.
 - `STATUS`는 현재 실행 상태를 나타내는 상태값이다. `BatchStatus`라는 enum 값이 문자열로 컨버팅되어 저장된다. 
 - `EXIT_CODE`는 실행 종료 코드를 나타내는 값이다. 
@@ -176,7 +177,7 @@ status에 저장되는 `BatchStatus` 값은 Job의 현재 상태를 정의해놓
 `JOB_INSTANCE`의 중복 여부를 판단할 때, key 값은 `Job Parameters`를 해싱한 값이라고 했다. 
 이때 `JobParameter`별로 해싱에 참여시킬지 말지 결정할 수 있는데, 그 boolean 값이 바로 `identifying`이다.  
 
-즉, 이녀석을 false로 하면 Job의 중복 여부를 결정하는데 아무런 영향이 없음을 의미한다. [identifying의 자세한 내용 - batch3](../batch2)
+즉, 이녀석을 false로 하면 Job의 중복 여부를 결정하는데 아무런 영향이 없음을 의미한다. [identifying의 자세한 내용 - batch3](../batch03)
 
 ---
 
@@ -185,11 +186,11 @@ status에 저장되는 `BatchStatus` 값은 Job의 현재 상태를 정의해놓
 
 ![img_7.png](src/main/resources/static/img_7.png)
 
-Step의 실행 상태인 `StepExecution` 객체 정보가 기록되는 테이블이다. [Step의 생성/실행 원리 - batch4](../batch4)
+Step의 실행 상태인 `StepExecution` 객체 정보가 기록되는 테이블이다. [Step의 생성/실행 원리 - batch04](../batch04)
 
 Step은 Job의 하위개념이고, Step의 실행 결과가 Job의 실행결과에 영향을 미친다. 
 때문에 특정 Job의 실행 상태인 `JobExecution`을 FK로 가지고 있으며, 특정 JobExecution에 속한 `StepExecution`들 중 하나라도 실패하면 `JobExecution`도 실패한다.   
-이에 대한 소스코드 분석은 [batch4](../batch4)글을 참고하면 된다. 
+이에 대한 소스코드 분석은 [batch04](../batch04)글을 참고하면 된다. 
 
 저장된 데이터를 보니, `transferNewUserJob` 내부에 정의된 하나의 Step인 `transferNewUserStep`이 기록되어 있다. 
 해당 Step의 실행 상태를 저장하고 있다. 3, 4 등 불규칙한 count값들이 저장되어 있는데 무엇인지 살펴보자.   
@@ -201,6 +202,7 @@ chunk size 단위 커밋이면 3이어야 하는데 왜 4이지? 라는 의문�
 - `READ_COUNT: 6`, `WRITE_COUNT: 6`
 총 6개의 더미 데이터를 읽고, processor에서 하나도 걸러지지 않았기 때문에 동일한 값이 나왔다.  
 
+---
 
 ## 10.5 EXECUTION_CONTEXT 
 
@@ -209,16 +211,21 @@ ExecutionContext의 개념에 대해 알아보기 전에, 가볍게 StepExecutio
 때문에, Batch에서 제공하는 메타데이터에는 `JOB_EXECUTION_CONTEXT`와 `STEP_EXECUTION_CONTEXT` 두 가지를 제공한다.  
 두 테이블의 스키마는 아래와 같다.  
 
-- `JOB_EXECUTION_CONTEXT`
-![img_10.png](src/main/resources/static/img_10.png)
-  `JOB_EXECUTION_ID`: `BATCH_JOB_EXECUTION` FK
-  `SHORT_CONTEXT`: SERIALIZER_CONTEXT의 String version
-  `SERIALIZED_CONTEXT`: 직렬화된 ExecutionContext
+**JOB_EXECUTION_CONTEXT**    
 
-  
-- `STEP_EXECUTION_CONTEXT`
+![img_10.png](src/main/resources/static/img_10.png)    
+
+- `JOB_EXECUTION_ID`: `BATCH_JOB_EXECUTION` FK   
+- `SHORT_CONTEXT`: SERIALIZER_CONTEXT의 String version   
+- `SERIALIZED_CONTEXT`: 직렬화된 ExecutionContext
+
+<br>
+
+**STEP_EXECUTION_CONTEXT**    
+
 ![img_11.png](src/main/resources/static/img_11.png)
-  `JOB_EXECUTION_CONTEXT`의 필드와 같은 의미의 필드들을 가진다.   
+
+- `JOB_EXECUTION_CONTEXT`의 필드와 같은 의미의 필드들을 가진다.   
 
 ----
 
@@ -246,11 +253,9 @@ executionContext.get("key");
 ```
 
 실행 중에 상태를 관리하는 이 `ExecutionContext`의 값들을 DB에 영속화 시키기 위한 테이블이 바로 `BATCH_JOB_EXECUTION_CONTEXT`, `BATCH_STEP_EXECUTION_CONTEXT`인 것이다.  
-새로운 예시를 통해, Step의 실패를 유도하고 실패지점부터 재시작이 가능하도록 StepExecutionContext를 잘 써먹어보자.   
+새로운 예시를 통해, Step의 실패를 유도하고 실패지점부터 재시작이 가능하도록 StepExecutionContext를 잘 써먹어보자.
 
-
-----
-
+<br>
 
 ### 10.5.1 ExecutionContext 예시코드 
 
@@ -408,7 +413,7 @@ step이 실패했으니, 이에 따라 `BATCH_JOB_EXECUTION`의 결과도 `FAILE
 
 ![img_22.png](src/main/resources/static/img_22.png)
 
-----
+<br>
 
 위 상태에서 reader 예외 메서드를 제거하고 재실행해보자.
 

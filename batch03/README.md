@@ -300,7 +300,7 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
 #### 3.1.2.2 [JobLauncher::run()의 동작 방식 1] 
 <img src="src/test/resources/static/img10.png" alt="" width="370" height="95">   
 
-JobLauncher는 run() 메서드 하나만 정의해놓은 함수형 인터페이스다. run()을 통해 Job을 실행시키고, 실행을 의미하는 JobExecution을 반환한다. [(batch3 참고)](../batch2/README.md)  
+JobLauncher는 run() 메서드 하나만 정의해놓은 함수형 인터페이스다. run()을 통해 Job을 실행시키고, 실행을 의미하는 JobExecution을 반환한다. [(batch03 참고)](../batch03/README.md)  
 JobLuancher 인터페이스의 구현체는 두 가지가 있다. `TaskExecutorJobLauncher`와 `SimpleJobLauncher`이다. 정확히는 `TaskExecutorJobLauncher`가 `SimpleJobLauncher`를 상속받아 처리하고 있는데, 
 이는 deprecated 될(or 된)  `SimpleJobLauncher`를 확장한 클래스라고 이히하면 된다. 아래는  `TaskExecutorJobLauncher` 코드다.  
 
@@ -416,7 +416,7 @@ public abstract class AbstractJob implements Job, StepLocator, BeanNameAware, In
 
 
 근데, 여기서 한 가지 넘어간 부분이 있다. 바로, JobExecution의 상태를 `COMPLETED`로 변경하는 부분이다. 
-해당 로직은 사실 doExecute() 구현체인 SimpleJob::doExecute()에 있는데, 해당 로직은 대부분 Step 내용이 포함되어 있어 [step 관련 글](../batch4/README.md)에서 별도로 설명한다.  
+해당 로직은 사실 doExecute() 구현체인 SimpleJob::doExecute()에 있는데, 해당 로직은 대부분 Step 내용이 포함되어 있어 [step 관련 글](../batch04/README.md)에서 별도로 설명한다.  
 여기서는 "SimpleJob::doExecute()가 COMPLETED 상태로 변경한다" 정도만 이해해두려고 한다.  
 
 위 내용을 기반으로 메서드 호출구조가 아래와 같다고 이해하면 된다.  

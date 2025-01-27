@@ -155,7 +155,7 @@ public class StepBuilder extends StepBuilderHelper<StepBuilder> {
 ```
 
 `chunk()` 메서드는 `SimpleStepBuilder`를 반환한다. 이는 `TaskletStep`을 생성해주는 `bulid()`메서드를 가지고 있다. 
-앞서, Tasklet::execute()를 구현하는 [단일 태스크 방식](../batch5/README.md)에서도 `Tasklet`을 생성하긴 했다. 
+앞서, Tasklet::execute()를 구현하는 [단일 태스크 방식](../batch05/README.md)에서도 `Tasklet`을 생성하긴 했다. 
 하지만 이때는 `StepBuilder::tasklet()` 호출을 통해 `TaskletStepBuilder`를 반환받은 반면, `StepBuilder::chunk()`을 통해 `SimpleStepBuilder`을 반환받는다.  
 
 `SimpleStepBuilder`의 내부 구조를 보면서 어떻게 `ChunkOrientedTasklet`이 생성되는지 확인해보자.  
@@ -236,7 +236,7 @@ public abstract class AbstractTaskletStepBuilder<B extends AbstractTaskletStepBu
 ## 8.4 ChunkOrientedTasklet의 실행 방식
 
 `ChunkOrientedTasklet`는 결국 청크 지향 처리에 대한 로직이 정의되어 있는 Tasklet인 셈이다. 
-때문에, `Tasklet`을 구현하고 있고, 결국에는 Tasklet::execute()메서드를 구현하고 있을 것이다.([Tasklet 글 참고](../batch5/README.md))  
+때문에, `Tasklet`을 구현하고 있고, 결국에는 Tasklet::execute()메서드를 구현하고 있을 것이다.([Tasklet 글 참고](../batch05/README.md))  
 
 구현 코드를 직접 보며 알아보자.  
 
@@ -337,12 +337,12 @@ protected final I doRead() throws Exception {
 ```
 
 `provide()` 메서드는 repeatOperations를 통해 반복해서 아이템을 읽어들인다. `RepeatOperations`의 구현체는 `RepeatTemplate`으로 초기화 되어 있다. 
-[Tasklet을 설명하는 글](../batch5/README.md)에서 `RepeatTemplate`의 `completionPolicy`필드에 대해 설명한 적이 있다.  
+[Tasklet을 설명하는 글](../batch05/README.md)에서 `RepeatTemplate`의 `completionPolicy`필드에 대해 설명한 적이 있다.  
 
 `SimpleChunkProvider`에서 초기화 되어 있는 `RepeatTemplate`의 `CompletionPolicy`는 `SimpleCompletionPolicy` 클래스의 객체가 초기화 되어 있다. 
 그리고, SimpleCompletionPolicy가 구현하고 있는 `isComplete()` 메서드는 아래와 같다. 
 
-`read()` 메서드에 대해서는 [ItemReader 챕터](../batch9/README.md)에서 설명하고 있으니 참고하자. 
+`read()` 메서드에 대해서는 [ItemReader 챕터](../batch09/README.md)에서 설명하고 있으니 참고하자. 
 
 ```java
 public class SimpleCompletionPolicy extends DefaultResultCompletionPolicy {
@@ -354,7 +354,7 @@ public class SimpleCompletionPolicy extends DefaultResultCompletionPolicy {
 
 즉, SimpleChunkProvider 내부에 초기화 되어 있는 RepeatTemplate의 CompletePolicy는 `SimpleCompletionPolicy`이며, 
 해당 클래스는 Step 생성 시 설정한 chunk size의 값과 같거나 크다면 완료 처리를 한다. 이후에는 더 이상 데이터를 읽어들이지 않는다.  
-(RepeatTemplate이나 CompletionPolicy 등과 관련된 개념은 [batch5](../batch5/README.md)에서 정리하고 있다.)
+(RepeatTemplate이나 CompletionPolicy 등과 관련된 개념은 [batch05](../batch05/README.md)에서 정리하고 있다.)
 
 어쨌든, 이렇게 읽어들인 데이터를 `chunkProcessor.process()`로 넘겨 나머지 로직을 수행한다. 
 

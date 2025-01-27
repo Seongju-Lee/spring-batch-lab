@@ -19,12 +19,12 @@ Spring Batch 5의 사용법을 익히고, 동작 원리 제대로 이해한다.
 - Java 21
 
 ### 목차
-1. [스프링 배치 기본 구성 코드예시](batch1)
-2. [스프링 배치 기본 구성 - Job(JobInstance & JobParameters & JobExecution)](batch2)
-3. [Job의 구성방식 및 실행방식 - JobLauncher & Job & JobRepository](batch3)
-4. [Step의 기본 구성과 생성원리, 그리고 실행원리 - StepBuilder & Step](batch4)
-5. [Tasklet과 TaskletStep](batch5)
-7. [Scope - Job Scope & Step Scope (w. 지연 바인딩)](batch7)
-8. [Chunk 지향 처리 방식의 기본구성과 아키텍처](batch8)
-9. [Chnck 지향 처리 1 - ItemReader](batch9)
+1. [스프링 배치 기본 구성 코드예시](batch01)
+2. [스프링 배치 기본 구성 - Job(JobInstance & JobParameters & JobExecution)](batch02)
+3. [Job의 구성방식 및 실행방식 - JobLauncher & Job & JobRepository](batch03)
+4. [Step의 기본 구성과 생성원리, 그리고 실행원리 - StepBuilder & Step](batch04)
+5. [Tasklet과 TaskletStep](batch05)
+7. [Scope - Job Scope & Step Scope (w. 지연 바인딩)](batch07)
+8. [Chunk 지향 처리 방식의 기본구성과 아키텍처](batch08)
+9. [Chnck 지향 처리 1 - ItemReader](batch09)
 10. [스프링 배치 메타 데이터 - Meta-Data Schema](batch10)
