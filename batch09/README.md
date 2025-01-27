@@ -218,10 +218,12 @@ jdbc에서 제공하는 RowMapper 인터페이스는 함수형 인터페이스�
 
 위 예제를 실행해보며, 조회 결과를 살펴보자.   
 
-더미 데이터는 아래와 같이 6개를 넣고, chunk size는 2로 지정한 후 실행시켜보자. 
+더미 데이터는 아래와 같이 6개를 넣고, chunk size는 2로 지정한 후 실행시켜보자.   
+
 ![img_2.png](src/test/resources/static/img_2.png)
 
-실행 결과는 아래와 같이 3번의 writer 로직이 호출된다. 총 6개의 데이터를 한 번의 read작업에서 fetchSize 만큼 가져오기 때문이다.  
+실행 결과는 아래와 같이 3번의 writer 로직이 호출된다. 총 6개의 데이터를 한 번의 read작업에서 fetchSize 만큼 가져오기 때문이다.   
+
 ![img_3.png](src/test/resources/static/img_3.png)
 
 스트리밍 방식으로 데이터를 가져오는 방식이다. 즉, 데이터를 읽어들이는 시점부터 배치가 끝날때까지 하나의 커넥션이 끊기지 않는다.  

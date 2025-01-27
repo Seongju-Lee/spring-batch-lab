@@ -211,15 +211,19 @@ ExecutionContext의 개념에 대해 알아보기 전에, 가볍게 StepExecutio
 때문에, Batch에서 제공하는 메타데이터에는 `JOB_EXECUTION_CONTEXT`와 `STEP_EXECUTION_CONTEXT` 두 가지를 제공한다.  
 두 테이블의 스키마는 아래와 같다.  
 
-- `JOB_EXECUTION_CONTEXT`
-![img_10.png](src/main/resources/static/img_10.png)
+- `JOB_EXECUTION_CONTEXT`   
+
+  ![img_10.png](src/main/resources/static/img_10.png)    
+
   `JOB_EXECUTION_ID`: `BATCH_JOB_EXECUTION` FK
   `SHORT_CONTEXT`: SERIALIZER_CONTEXT의 String version
   `SERIALIZED_CONTEXT`: 직렬화된 ExecutionContext
 
   
-- `STEP_EXECUTION_CONTEXT`
-![img_11.png](src/main/resources/static/img_11.png)
+- `STEP_EXECUTION_CONTEXT`    
+
+  ![img_11.png](src/main/resources/static/img_11.png)  
+
   `JOB_EXECUTION_CONTEXT`의 필드와 같은 의미의 필드들을 가진다.   
 
 ----
