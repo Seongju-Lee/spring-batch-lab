@@ -213,18 +213,18 @@ ExecutionContext의 개념에 대해 알아보기 전에, 가볍게 StepExecutio
 
 - `JOB_EXECUTION_CONTEXT`   
 
-  ![img_10.png](src/main/resources/static/img_10.png)    
+![img_10.png](src/main/resources/static/img_10.png)    
 
-  `JOB_EXECUTION_ID`: `BATCH_JOB_EXECUTION` FK
-  `SHORT_CONTEXT`: SERIALIZER_CONTEXT의 String version
-  `SERIALIZED_CONTEXT`: 직렬화된 ExecutionContext
+- `JOB_EXECUTION_ID`: `BATCH_JOB_EXECUTION` FK   
+- `SHORT_CONTEXT`: SERIALIZER_CONTEXT의 String version   
+- `SERIALIZED_CONTEXT`: 직렬화된 ExecutionContext
 
   
 - `STEP_EXECUTION_CONTEXT`    
 
-  ![img_11.png](src/main/resources/static/img_11.png)  
+![img_11.png](src/main/resources/static/img_11.png)
 
-  `JOB_EXECUTION_CONTEXT`의 필드와 같은 의미의 필드들을 가진다.   
+- `JOB_EXECUTION_CONTEXT`의 필드와 같은 의미의 필드들을 가진다.   
 
 ----
 
