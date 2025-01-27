@@ -80,6 +80,7 @@ public class TransferNewUserJobConfiguration {
 
 그리고, 테스트 데이터는 총 User 데이터를 6개 저장했다. `registeredAt`은 다 하루 전으로 저장했기 때문에, processor에서 하나도 걸러지지 않는다.  
 
+---
 
 ## 10.1 JOB_INSTANCE
 
@@ -201,6 +202,7 @@ chunk size 단위 커밋이면 3이어야 하는데 왜 4이지? 라는 의문�
 - `READ_COUNT: 6`, `WRITE_COUNT: 6`
 총 6개의 더미 데이터를 읽고, processor에서 하나도 걸러지지 않았기 때문에 동일한 값이 나왔다.  
 
+---
 
 ## 10.5 EXECUTION_CONTEXT 
 
@@ -246,11 +248,9 @@ executionContext.get("key");
 ```
 
 실행 중에 상태를 관리하는 이 `ExecutionContext`의 값들을 DB에 영속화 시키기 위한 테이블이 바로 `BATCH_JOB_EXECUTION_CONTEXT`, `BATCH_STEP_EXECUTION_CONTEXT`인 것이다.  
-새로운 예시를 통해, Step의 실패를 유도하고 실패지점부터 재시작이 가능하도록 StepExecutionContext를 잘 써먹어보자.   
+새로운 예시를 통해, Step의 실패를 유도하고 실패지점부터 재시작이 가능하도록 StepExecutionContext를 잘 써먹어보자.
 
-
-----
-
+<br>
 
 ### 10.5.1 ExecutionContext 예시코드 
 
@@ -408,7 +408,7 @@ step이 실패했으니, 이에 따라 `BATCH_JOB_EXECUTION`의 결과도 `FAILE
 
 ![img_22.png](src/main/resources/static/img_22.png)
 
-----
+<br>
 
 위 상태에서 reader 예외 메서드를 제거하고 재실행해보자.
 

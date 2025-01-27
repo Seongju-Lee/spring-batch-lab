@@ -3,9 +3,10 @@
 ChunkOrientedTasklet에 의해 Chunk 처리가 이루어짐을 파악했고, 이는 ItemReader & ItemProcessor & ItemWriter로 구성됨을 알았다. 
 본 글에서는 데이터를 읽어들이는 ItemReader에 대해 알아보고자 한다.   
 
+---
 
 ## 9.1 ItemReader
-ItemReader는 인터페이스다. 어딘가로부터 데이터를 읽어들이기 위해 ItemReader를 적절하게 구현할 수 있다는 의미이기도 하다. 
+`ItemReader`는 인터페이스다. 어딘가로부터 데이터를 읽어들이기 위해 ItemReader를 적절하게 구현할 수 있다는 의미이기도 하다. 
 하지만, Spring Batch에서는 다양한 구현체들이 존재하기 때문에 구현체들 위주로 알아보고자 한다.  
 
 그에 앞서, ItemReader 인터페이스와 그 구현체들은 어떻게 관계가 구성되어 있는지 알아보자.  
@@ -19,11 +20,12 @@ public interface ItemReader<T> {
 }
 ```
 
-위 코드는 ItemReader 인터페이스를 그대로 가져온 것이다. 함수형 인터페이스로 `read()` 메서드를 하나 정의하고 있다.  
+위 코드는 `ItemReader` 인터페이스를 그대로 가져온 것이다. 함수형 인터페이스로 `read()` 메서드를 하나 정의하고 있다.  
 정말 데이터를 읽어드리는 역할만 수행하고 있는데, 사실 Spring Batch에서 주로 사용되는 ItemReader들(ItemReader의 구현체들)은 ItemReader만을 구현하진 않는다.  
 
 `ItemStream` 이라는 인터페이스도 함께 구현한 `ItemStreamReader`를 사용한다. 어떻게 사용하는 것일까? 살펴보자.  
 
+---
 
 ## 9.2 ItemStream
 
@@ -51,12 +53,15 @@ public interface ItemStream {
 이는 `ItemReader`와만 함께 쓰이는 인터페이스가 아니다. 데이터에 접근하는 일은 읽는 작업도 있지만, 쓰기 작업도 있다. 즉, `ItemWriter`도 해당 인터페이스와 조화롭게 사용되곤 한다.   
 현재는 ItemReader를 다루고 있으니, Spring Batch에는 ItemReader와 ItemStream을 조합한 어떤 구현체들이 있는지 알아보자.  
 
+---
 
 ## 9.3 ItemStreamReader의 구현 방식 - Cursor? Paging?
 
 배치를 띄우고 실행하는 가장 큰 목적은 아마 대용량 처리일 것이다. 대용량 데이터를 한번에 메모리에 로드해서 처리할 수 있다면 그건 배치처리가 굳이 필요 없을 수 있다.  
 즉, 배치는 I/O 성능 문제나 메모리 오버플로우를 고려되어야 한다. 
 스프링 배치에서는 이를 해결하기 위해 **두 타입의 ItemReader를 기반**으로 한다.  
+
+<br>
 
 ### 9.3.1 Cursor 기반 vs Paging 기반
 (JDBC의 ResultSet 메커니즘을 그대로 사용하는)Cursor 기반 조회는 데이터를 한번에 메모리에 로드하지 않고, 스트리밍 방식으로 메모리에 올린다. 
@@ -70,15 +75,16 @@ Paging 기반 조회는 페이징 단위로 연결을 맺고 끊는 방식이다
 
 ![img_1.png](src/test/resources/static/img_1.png)
 
+---
 
-### 9.3.4 Cursor 기반의 ItemReader
+### 9.3.2 Cursor 기반의 ItemReader
 
 Spring Batch에서 제공하는 많은 ItemReader 구현체들 중, 여기서 알아볼 Cursor 기반인 구현체는 아래와 같이 있다.
 - JdbcCursorItemReader
 - JpaCursorItemReader
 
 
-#### 9.3.4.1 JdbcCursorItemReader
+#### 9.3.2.1 JdbcCursorItemReader
 
 우선, `JdbcCursorItemReader`를 사용해서 Reader를 구성한 청크 지향 배치 설정을 코드로 살펴보자.  
 
@@ -149,6 +155,8 @@ public class JdbcCursorReaderExampleConfiguration {
 ChunkProvider에는 `provide()` 메서드가 있다. 그리고, `provide()` 메서드는 내부적으로 `read()` 메서드를 호출한다.  
 그 read() 메서드는 아래와 같다.  
 
+<br>
+
 ```java
 protected I read(StepContribution contribution, Chunk<I> chunk) throws SkipOverflowException, Exception {
     return this.doRead();
@@ -188,6 +196,8 @@ public class JdbcCursorItemReader<T> extends AbstractCursorItemReader<T> {
 `JdbcCursorItemReader::read()`를 호출하면 상위 클래스가 호출되고, 결국에는 `JdbcCursorItemReader`의 `readCursor()`메서드가 호출된다.  
 `readCursor()`는 내부적으로 `ResultSet`의 `next`를 호출시키면서 커서를 다음 행으로 이동 시켜가며 데이터를 RowMapper에 설정한 객체와 매핑시킨다.  
 
+<br>
+
 <참고>
 
 RowMapper의 `mpaRow()` 기능은 무엇일까?  
@@ -220,9 +230,9 @@ jdbc에서 제공하는 RowMapper 인터페이스는 함수형 인터페이스�
 ![img_4.png](src/test/resources/static/img_4.png)
 
 
----
+<br>
 
-#### 9.3.4.2 JpaCursorItemReader
+#### 9.3.2.2 JpaCursorItemReader
 
 `JpaCursorItemReader`는 jpa의 `Query`객체를 사용해서 데이터를 읽어들인다. 
 정확히는 `Query.getResultStream()`을 통해 데이터 목록을 조회해오고, 이를 `Stream`으로 변환한다. 
@@ -250,7 +260,7 @@ T doRead() {
 
 ----
 
-### 9.3.5 Paging 기반의 ItemReader
+### 9.3.3 Paging 기반의 ItemReader
 
 Spring Batch에서 제공하는 많은 ItemReader 구현체들 중, 여기서 알아볼 Paging 기반의 구현체는 아래와 같이 있다.
 - JpaPagingItemReader
@@ -258,8 +268,9 @@ Spring Batch에서 제공하는 많은 ItemReader 구현체들 중, 여기서 �
 `JdbcPagingItemReader` 방식도 있지만, 현재 Jpa 기반으로 pagingReader를 구성하고 있어서 `JpaPagingItemReader`만 파악해보려고 한다.
 (JdbcPagingItemReader는 JdbcCursorItemReader 방식에서의 JdbcTemplate과 페이징 방식을 조화롭게 사용하고 있지않을까 예측해본다.. 기회가 되면 파악해보기로..)
 
+<br>
 
-#### 9.3.5.1 JpaPagingItemReader
+#### 9.3.3.1 JpaPagingItemReader
 
 우선, `JpaPagingItemReader`를 사용해서 Reader를 구성한 청크 지향 배치 설정을 코드로 살펴보자.  
 
