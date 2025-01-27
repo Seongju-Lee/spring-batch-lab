@@ -73,7 +73,8 @@ Spring Batch 5.1 기준, Job의 종류에는 아래 네 가지가 있다.
 
 ![img.png](src/test/resources/static/img.png)
 
-엔티티 다이어그램으로 표현하면, 아래와 같다.
+엔티티 다이어그램으로 표현하면, 아래와 같다.   
+
 ![img.png](src/test/resources/static/img2.png)
 
 Job 인터페이스를 구현하고 있는 AbstractJob이란 추상클래스가 존재한다. 이 추상클래스의 역할은 템플릿 메서드 패턴의 역할을 한다. 자세한 내용은 아래 디버깅을 통해서 확인한다.  
@@ -116,8 +117,6 @@ JobBuilderHelper()에서는 properties 객체 내부에 속성 값들을 저장�
 
 ### 3.1.1.3 JobBuilder 객체 생성 & JobBuilder::start() 호출
 
-<img src="src/test/resources/static/img4.png" alt="" width="260" height="100">
-
 위 1,2 과정(`new JobBuilder()`)을 통해 JobBuilder 객체를 생성했다. 그 다음은 start()메서드를 호출할 차례다. JobBuilder::start()를 확인해보면 아래와 같다.
 
 <br>
@@ -130,30 +129,30 @@ start() 메서드가 오버로딩 되어 있는데, 하나의 파라미터 타�
 <img src="src/test/resources/static/img6.png" alt="" width="310" height="150">     
 
 현재 예제에서는 `step`을 인자로 넘겼기 때문에 SimpleJobBuilder를 리턴한다.  
-그리고, `new SimpleJobBuilder.start()`를 통해서 SimpleJobBuilder를 리턴하는데, 아래 이미지를 보자.   
+그리고, `new SimpleJobBuilder.start()`를 통해서 SimpleJobBuilder를 리턴하는데, 아래 `SimpleJobBuilder#start()` 메서드를 보자.   
 
 <img src="src/test/resources/static/img21.png" alt="" width="450" height="200">  
 
 **SimpleJobBuilder 클래스는 List<Step> 타입의 steps라는 멤버변수를 가지고 있다.**
-SimpleJobBuilder::start() 메서드는 내부적으로 Job에 정의된 step들을 steps 리스트에 저장한다. 
+`SimpleJobBuilder#start()` 메서드는 내부적으로 Job에 정의된 step들을 자신의 멤버인 steps 리스트에 저장한다. 
 
 <br>
 
 ### 3.1.1.4 SimpleJobBuilder::build() 호출을 통해 SimpleJob 생성
 <img src="src/test/resources/static/img7.png" alt="" width="400" height="140">   
 
-3번에서의 start()를 통해서 SimpleJobBuilder가 생성되었고, SimpleJobBuilder::build()를 호출하게 되는 것이다.
+3번에서의 start()를 통해서 SimpleJobBuilder가 생성되었고, `SimpleJobBuilder#build()`를 호출하게 되는 것이다.
 
 <br>
 <img src="src/test/resources/static/img8.png" alt="" width="790" height="380">
 
-결과적으로 위에 보이는 SimpleJobBuilder::build() 메서드를 호출을 통해 Job 객체를 반환 시킨다.  
+결과적으로 위에 보이는 `SimpleJobBuilder#build()` 메서드를 호출을 통해 Job 객체를 반환 시킨다.  
 내부 로직을 보면, `new SimpleJob()`을 통해 SimpleJob을 생성해서 리턴하는 것을 확인할 수 있다. 
 
-추가로 SimpleJob은 List<Step> 타입의 멤버변수인 steps를 가지고 있다.  
+추가로 SimpleJob은 List<Step> 타입의 멤버변수인 steps를 가지고 있다고 했다.  
 
-`job.setSteps(this.steps)`를 보자.  
-**SimpleJobBuilder 필드에 저장된 steps 변수를 SimpleJob::setSteps()를 통해 SimpleJob에 업데이트 하고 있다.**  
+위 코드에서 else절에 있는 `job.setSteps(this.steps)`를 보자.  
+**SimpleJobBuilder 필드에 저장된 steps 변수를 SimpleJob#setSteps()를 통해 SimpleJob에 업데이트 하고 있다.**  
 뒤에 나오는 내용이지만, **SimpleJob 내부에서는 이 step변수에 저장된 step들을 실행**하는 것이다.  
 
 여기서 알 수 있는 또다른 사실은 **JobBuilder가 직접 SimpleJob을 생성하지 않고, SimpleJobBuilder에게 그 역할을 위임**하는 것이다. 
@@ -161,7 +160,7 @@ SimpleJobBuilder::start() 메서드는 내부적으로 Job에 정의된 step들�
 
 <img src="src/test/resources/static/img9.png" alt="" width="700" height="200">
 
-SimpleJob 생성 플로우를 디버깅을 통해 파악하고, 다이어그램을 통해 자세히 파악했다. FlowJob은 생성 흐름이 아주 조금 달라서 여기서는 생략했다. 별도 포스팅으로 정리할 예정이다.   
+SimpleJob 생성 플로우를 디버깅을 통해 파악하고, 다이어그램을 통해 자세히 정리했다. FlowJob은 생성 흐름이 아주 조금 달라서 여기서는 생략했다. 별도 포스팅으로 정리할 예정이다.   
 
 ---
 
