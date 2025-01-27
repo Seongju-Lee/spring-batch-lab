@@ -18,7 +18,7 @@ Spring Batch는 Job이라는 단위로 작업을 분류한다.
 ![job과 step의 관계](src/main/resources/static/job_step.png)
 
 하나의 Job안에는 여러 Step을 정의할 수 있으며, 이 **Step들이 모여서** 1.1의 Job에서 이야기한 **일련의 작업**이 되는 것이다.   
-또한, Job이 여러 개의 Step을 가지듯, Step도 어떻게 구성하느냐에 따라서 내부 구성이 달라질 수 있는데 이는 [Step과 관련된 글](../batch4/README.md)에서 자세히 다룬다.  
+또한, Job이 여러 개의 Step을 가지듯, Step도 어떻게 구성하느냐에 따라서 내부 구성이 달라질 수 있는데 이는 [Step과 관련된 글](../batch04/README.md)에서 자세히 다룬다.  
 
 ---
 
@@ -150,7 +150,7 @@ class TransferNewUserJobConfigurationTest extends TestTemplate {
 
 1. **첫번째 박스**  
 `TRANSFER_NEW_USER_JOB`이란 이름을 가진 JOB이 실행되었다. 그런데, 따라오는 parameters 값이 있다. 
-자세한 내용은 [Job 정리 글](../batch2/README.md)에서 다루지만, 우선은 **Job 실행을 고유하게 식별하기 위한 값**이라고 이해하면 된다.   
+자세한 내용은 [Job 정리 글](../batch02/README.md)에서 다루지만, 우선은 **Job 실행을 고유하게 식별하기 위한 값**이라고 이해하면 된다.   
 random이라는 키로 하여금 Long 타입의 value값이 있다. 
 이는 `JobLauncherTestUtils`에서 제공해주는 값으로 중복 Job 실행을 막기 위한 값이다. 참고로 **중복 Job 여부의 기준은 JobParameter 값**이다. 
 때문에, 테스트 환경에서 중복 Job에 의한 제약을 막기위해 제공하고 있다.(Job은 중복실행을 허용하지 않음)   

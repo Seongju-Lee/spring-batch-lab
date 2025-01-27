@@ -131,7 +131,7 @@ public class JdbcCursorReaderExampleConfiguration {
 }
 ```
 
-전체적인 코드의 기능은 [이전글](../batch8/README.md)과 동일하다. 여기서는 `reader()` 메서드를 잘 살펴보자.  
+전체적인 코드의 기능은 [이전글](../batch08/README.md)과 동일하다. 여기서는 `reader()` 메서드를 잘 살펴보자.  
 `JdbcCursorItemReaderBuilder`를 통해 reader를 생성한다. `JdbcCursorItemReader`를 생성하기 위한 설정값은 무엇이 있을까?  
 
 - `name`: `ExecutionContext`에 상태를 저장하고 관리되기 위한 이름을 지정한다. 
@@ -145,7 +145,7 @@ public class JdbcCursorReaderExampleConfiguration {
 
 내부적으로 `JdbcCursorItemReaderBuilder`는 어떻게 데이터를 스트리밍 하는 것인가에 대해 알아보자.  
 
-[이전글](../batch8/README.md)에서 ChunkProvider는 Reader 로직을 담당한다고 했었다.  
+[이전글](../batch08/README.md)에서 ChunkProvider는 Reader 로직을 담당한다고 했었다.  
 ChunkProvider에는 `provide()` 메서드가 있다. 그리고, `provide()` 메서드는 내부적으로 `read()` 메서드를 호출한다.  
 그 read() 메서드는 아래와 같다.  
 
